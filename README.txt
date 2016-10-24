@@ -1,7 +1,6 @@
 
-This is a fork of https://launchpad.net/django-openid-auth. It has the following differences from upstream:
+This is a fork of https://github.com/strycore/django-openid-auth. It has been updated to support Python 3.  Which is also  a fork of https://launchpad.net/django-openid-auth. It has the following differences from upstream: https://github.com/edx/django-openid-auth/pull/1.
 
-* https://github.com/edx/django-openid-auth/pull/1.
 
 
 To bring in the latest changes:

@@ -29,8 +29,9 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.views import logout
 
-import views
+from . import views
 
 
 admin.autodiscover()
@@ -38,7 +39,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^$', views.index),
     url(r'^openid/', include('django_openid_auth.urls')),
-    url(r'^logout/$', 'django.contrib.auth.views.logout'),
+    url(r'^logout/$', logout),
     url(r'^private/$', views.require_authentication),
 
     url(r'^admin/', include(admin.site.urls)),

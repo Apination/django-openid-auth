@@ -84,7 +84,7 @@ ns_uri = 'http://ns.launchpad.net/2007/openid-teams'
 
 try:
     registerNamespaceAlias(ns_uri, 'lp')
-except NamespaceAliasRegistrationError, e:
+except NamespaceAliasRegistrationError as e:
     oidutil.log(
         'registerNamespaceAlias(%r, %r) failed: %s' % (ns_uri, 'lp', str(e)))
 
@@ -139,7 +139,7 @@ def getTeamsNS(message):
         # There is no alias, so try to add one. (OpenID version 1)
         try:
             message.namespaces.addAlias(ns_uri, 'lp')
-        except KeyError, why:
+        except KeyError as why:
             # An alias for the string 'lp' already exists, but it's
             # defined for something other than Launchpad teams
             raise TeamsNamespaceError(why[0])

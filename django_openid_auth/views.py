@@ -28,10 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
 
 import re
 import urllib
-from urlparse import urlsplit
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth import (
@@ -297,7 +299,7 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
     if openid_response.status == SUCCESS:
         try:
             user = authenticate(openid_response=openid_response)
-        except DjangoOpenIDException, e:
+        except DjangoOpenIDException as e:
             return render_failure(request, e.message, exception=e)
 
         if user is not None:

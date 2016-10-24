@@ -28,9 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
 
-from urllib import urlencode
-from urlparse import parse_qsl, urlparse
+from urllib.parse import urlparse, urlencode, parse_qsl
 
 from django.conf import settings
 from django.contrib import admin
