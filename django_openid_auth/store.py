@@ -75,7 +75,7 @@ class DjangoOpenIDStore(OpenIDStore):
         expired = []
         for assoc in assocs:
             association = OIDAssociation(
-                assoc.handle, base64.decodestring(assoc.secret), assoc.issued,
+                assoc.handle, base64.decodebytes(assoc.secret.encode("utf-8")), assoc.issued,
                 assoc.lifetime, assoc.assoc_type
             )
             if association.getExpiresIn() == 0:
