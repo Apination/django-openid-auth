@@ -33,7 +33,7 @@ install_aliases()
 
 import re
 import urllib
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlencode
 
 from django.conf import settings
 from django.contrib.auth import (
@@ -277,7 +277,7 @@ def login_begin(request, template_name='openid/login.html',
         # Django gives us Unicode, which is great.  We must encode URI.
         # urllib enforces str. We can't trust anything about the default
         # encoding inside  str(foo) , so we must explicitly make foo a str.
-        return_to += urllib.urlencode(
+        return_to += urlencode(
             {redirect_field_name: redirect_to.encode("UTF-8")})
 
     return render_openid_request(request, openid_request, return_to)
