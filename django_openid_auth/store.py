@@ -65,7 +65,6 @@ class DjangoOpenIDStore(OpenIDStore):
         assoc.save()
 
     def getAssociation(self, server_url, handle=None):
-        assocs = []
         if handle is not None:
             assocs = Association.objects.filter(
                 server_url=server_url, handle=handle)
@@ -78,7 +77,7 @@ class DjangoOpenIDStore(OpenIDStore):
                 assoc.handle, base64.decodebytes(assoc.secret.encode("utf-8")), assoc.issued,
                 assoc.lifetime, assoc.assoc_type
             )
-            if association.getExpiresIn() == 0:
+            if association.expiresIn() == 0:
                 expired.append(assoc)
             else:
                 associations.append((association.issued, association))
