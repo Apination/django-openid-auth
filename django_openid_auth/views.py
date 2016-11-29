@@ -325,8 +325,7 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
     elif openid_response.status == CANCEL:
         return render_failure(request, 'Authentication cancelled')
     else:
-        assert False, (
-            "Unknown OpenID response type: %r" % openid_response.status)
+        return render_failure(request, "Unknown OpenID response type: %r" % openid_response.status)
 
 
 def logo(request):
