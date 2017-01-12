@@ -226,12 +226,14 @@ class OpenIDBackend:
             User.USERNAME_FIELD: username,
             'defaults': {
                 'email': email,
-                'password': None,
                 'is_active': True
             }
         }
 
         user, created = User.objects.get_or_create(**kwargs)
+        if created:
+            user.set_unusable_password()
+
         self.associate_openid(user, openid_response)
         self.update_user_details(user, details, openid_response)
 
