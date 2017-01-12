@@ -201,62 +201,8 @@ class OpenIDBackend:
 
         # If we don't have a nickname, and we're not being strict, use a
         # default
-        nickname = nickname or 'openiduser'
+        return nickname or 'openiduser'
 
-        # See if we already have this nickname assigned to a username
-        try:
-            User.objects.get_by_natural_key(nickname)
-        except User.DoesNotExist:
-            # No conflict, we can use this nickname
-            return nickname
-
-        # Check if we already have USERNAME_FIELD+i for this identity_url
-        try:
-            user_openid = UserOpenID.objects.get(**{'claimed_id__exact': identity_url,
-                                                    'user__{}__startswith'.format(User.USERNAME_FIELD): nickname})
-            # No exception means we have an existing user for this identity
-            # that starts with this nickname.
-
-            # If they are an exact match, the user already exists and hasn't
-            # changed their username, so continue to use it
-            if nickname == user_openid.user.username:
-                return nickname
-
-            # It is possible we've had to assign them to nickname+i already.
-            oid_username = user_openid.user.username
-            if len(oid_username) > len(nickname):
-                try:
-                    # check that it ends with a number
-                    int(oid_username[len(nickname):])
-                    return oid_username
-                except ValueError:
-                    # username starts with nickname, but isn't nickname+#
-                    pass
-        except UserOpenID.DoesNotExist:
-            # No user associated with this identity_url
-            pass
-
-        if getattr(settings, 'OPENID_STRICT_USERNAMES', False):
-            if User.objects.filter(**{User.USERNAME_FIELD: nickname}).count() > 0:
-                raise DuplicateUsernameViolation(
-                    "The username (%s) with which you tried to log in is "
-                    "already in use for a different account." % nickname)
-
-        # Pick a username for the user based on their nickname,
-        # checking for conflicts.  Start with number of existing users who's
-        # username starts with this nickname to avoid having to iterate over
-        # all of the existing ones.
-        i = User.objects.filter(**{'{}__startswith'.format(User.USERNAME_FIELD): nickname}).count() + 1
-        while True:
-            username = nickname
-            if i > 1:
-                username += str(i)
-            try:
-                User.objects.get(**{'{}__startswith'.format(User.USERNAME_FIELD): username})
-            except User.DoesNotExist:
-                break
-            i += 1
-        return username
 
     def create_user_from_openid(self, openid_response):
         details = self._extract_user_details(openid_response)
@@ -278,10 +224,14 @@ class OpenIDBackend:
             nickname, openid_response.identity_url)
         kwargs = {
             User.USERNAME_FIELD: username,
-            'email': email,
-            'password': None
+            'defaults': {
+                'email': email,
+                'password': None,
+                'is_active': True
+            }
         }
-        user = User.objects.create_user(**kwargs)
+
+        user, created = User.objects.get_or_create(**kwargs)
         self.associate_openid(user, openid_response)
         self.update_user_details(user, details, openid_response)
 
